@@ -82,7 +82,7 @@ window.buffers = {
 }
 
 window.connection = {
-    ws: "hello",
+    ws: null,
     connect(){
         this.ws = new WebSocket(`ws://${window.SERVER_HOST}:${window.SERVER_PORT}`)
         this.ws.binaryType = 'arraybuffer'
@@ -135,7 +135,6 @@ window.connection = {
 
                 break;
                  case 5:
-                console.log(dataView)
                 connected = dataView.getUint8(1);
                 spawned = dataView.getUint8(2);
                 serverPlayerAmount = dataView.getUint8(3);
@@ -246,7 +245,7 @@ function setKeysEvents(){
                     if(window.user.startedBots && window.user.isAlive){
                         if(!window.bots.ai){
                             document.getElementById('botsAI').style.color = '#00C02E'
-                            document.getElementById('botsAI').innerText = 'Enabled'
+                            document.getElementById('botsAI').innerText = 'Disabled'
                             window.bots.ai = true
                             window.connection.send(new Uint8Array([4, Number(window.bots.ai)]).buffer)
                         }
