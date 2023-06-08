@@ -9,9 +9,9 @@
 // ==/UserScript==
 
 /* START OF USER SETTINGS */
-let connected = 0;
-        let spawned = 0;
-let serverPlayerAmount = 0;
+let connected = 2;
+let spawned = 0;
+let serverPlayerAmount = 200;
 window.SERVER_HOST = 'localhost' // Hostname/IP of the server where the bots are running [Default = localhost (your own pc)]
 
 window.SERVER_PORT = 1337 // Port number used on the server where the bots are running [Default = 1337]
@@ -32,7 +32,7 @@ window.ZOOM_SPEED = 0.85 // Numerical value that indicates the speed of the mous
 
 window.EXTENDED_ZOOM = true // Boolean value that indicates whether to extend the zoom or not, possible values are true and false [Default = true]
 
-window.DRAW_MAP_GRID = false // Boolean value that indicates whether to draw the map grid or not, possible values are true and false [Default = false]
+window.DRAW_MAP_GRID = true // Boolean value that indicates whether to draw the map grid or not, possible values are true and false [Default = false]
 
 window.SHOW_ALL_PLAYERS_MASS = true // Boolean value that indicates whether to show all players mass or not, possible values are true and false [Default = true]
 
@@ -82,7 +82,7 @@ window.buffers = {
 }
 
 window.connection = {
-    ws: null,
+    ws: "hello",
     connect(){
         this.ws = new WebSocket(`ws://${window.SERVER_HOST}:${window.SERVER_PORT}`)
         this.ws.binaryType = 'arraybuffer'
@@ -135,7 +135,7 @@ window.connection = {
 
                 break;
                  case 5:
-
+                console.log(dataView)
                 connected = dataView.getUint8(1);
                 spawned = dataView.getUint8(2);
                 serverPlayerAmount = dataView.getUint8(3);
@@ -180,8 +180,8 @@ window.user = {
 }
 
 window.bots = {
-    name: '',
-    amount: 0,
+    name: 'oo',
+    amount: 20,
     ai: false
 }
 
@@ -199,8 +199,10 @@ function modifyCore(core){
         `)
         .replace(/new\s+WebSocket\((\w+\(\w+\))\)/, `
             $&
-            if(window.user.startedBots) window.connection.send(new Uint8Array([1]).buffer)
+            if(window.user.startedBots) window.connection.send(new Uint8Array([1]).buffer){
             window.game.url = $1
+            console.log(window.game.url)
+            }
             window.user.isAlive = false
             window.user.macroFeedInterval = null
         `).replace(/(\w+)=~~\(\+\w+\[\w+\+\d+>>3]\+\s+\+\(\(\w+\[\w+\+\d+>>2]\|0\)-\(\(\w+\[\d+]\|0\)\/2\|0\)\|0\)\/\w+\);(\w+)=~~\(\+\w+\[\w+\+\d+>>3]\+\s+\+\(\(\w+\[\w+\+\d+>>2]\|0\)-\(\(\w+\[\d+]\|0\)\/2\|0\)\|0\)\/\w+\)/, `
@@ -250,7 +252,7 @@ function setKeysEvents(){
                         }
                         else {
                             document.getElementById('botsAI').style.color = '#DA0A00'
-                            document.getElementById('botsAI').innerText = 'Disabled'
+                            document.getElementById('botsAI').innerText = 'Enabled'
                             window.bots.ai = false
                             window.connection.send(new Uint8Array([4, Number(window.bots.ai)]).buffer)
                         }
@@ -292,30 +294,34 @@ var iDiv = document.createElement('div');
     document.getElementById('mControl').innerHTML = '<div id="mControl">Mouse Control :<span class="label label-success pull-right">ON</span></div>';
 */
     $('body').append(`
-<div id="botClient" style="position: absolute; top: 92%; left: 85%; padding: 0px 8px; font-family: Tahoma; color: rgb(255, 255, 255); z-index: 9999; border-radius: 5px; min-height: 16px; min-width: 200px; background-color: rgba(2, 0, 0, 0.4);">
-<b>Bot Server</b>: <span id="serverStatus" class="label label-default pull-right"><b>Connecting...</b></span>
-<div><b>Bot Count</b>: <span id="botCount" class="label label-info pull-right">0/0</span></div>
-<b><div><b>ServerSlots</b>: <span id="slots" class="label label-info pull-right">0/0</span></div>
-</div>`);
-    document.getElementById('advertisement').innerHTML = `
-        <h2 id="botsInfo">
-            <a href="" target="_blank">Free Agar.io Bots FORK</a>
-        </h2>
-        <h5 id="botsAuthor">Developed by <a href="" target="_blank">Nel</a>
-        <h5 id="botsAuthor">Forked&Developed by <a href="" target="_blank">xKeksbyte</a>
-        </h5>
-        <span id="statusText">Status: <b id="userStatus">Disconnected</b></span>
-        <br>
-        <br>
-        <span id="aiText">Bots AI: <b id="botsAI">Disabled</b></span>
-        <br>
-        <input type="text" id="botsName" placeholder="Bots Name" value="git/xKeksbyte" maxlength="15" spellcheck="false" readonly>
-        <input type="number" id="botsAmount" placeholder="Bots Amount" min="10" max="199" spellcheck="false">
-        <button id="connect">Connect</button>
-        <br>
-        <button id="startBots" disabled>Start Bots</button>
-        <button id="stopBots">Stop Bots</button>
-    `
+    <div id="botClient" style="position: absolute; top: 60%; left: 70%; padding: 20px 20px; font-family: Tahoma; color: rgb(237, 223, 223); z-index: 9999; border-radius: 5px; background-color: rgba(0, 0, 0, 0.4);">
+    <b>Bot Server</b>: <span id="serverStatus" class="label label-default pull-right"><b>Connecting...</b></span>
+    <div>
+        <b>Bot Count</b>: <span id="botCount" class="label label-info pull-right">0/0</span>
+    </div>
+    <div>
+        <b>ServerSlots</b>: <span id="slots" class="label label-info pull-right">0/0</span>
+    </div>
+    
+
+    <h2 id="botsInfo">
+        <a href="" target="_blank">Free Agar.io Bots FORK</a>
+    </h2>
+    <h5 id="botsAuthor">Developed by <a href="" target="_blank">Nel</a></h5>
+    <h5 id="botsAuthor">Forked&Developed by <a href="" target="_blank">xKeksbyte</a></h5>
+    <span id="statusText">Status: <b id="userStatus">Disconnected</b></span>
+    <br>
+    <br>
+    <span id="aiText">Bots AI: <b id="botsAI">Disabled</b></span>
+    <br>
+    <input type="text" id="botsName" placeholder="Bots Name" value="git/xKeksbyte" maxlength="15" spellcheck="false" readonly>
+    <input type="number" id="botsAmount" placeholder="Bots Amount" value="100" min="10" max="500" spellcheck="false">
+
+    <button id="connect">Connect</button>
+    <br>
+    <button id="startBots" disabled>Start Bots</button> <button id="stopBots">Stop Bots</button>
+</div>
+    `)
     if(localStorage.getItem('localStoredBotsName') !== null){
         localStorage.setItem('localStoredBotsName', "git/xKeksbyte")
         console.log(localStorage.getItem('localStoredBotsName'))
@@ -329,6 +335,7 @@ var iDiv = document.createElement('div');
     if(localStorage.getItem('localStoredBotsAmount') !== null){
         window.bots.amount = JSON.parse(localStorage.getItem('localStoredBotsAmount'))
         document.getElementById('botsAmount').value = String(window.bots.amount)
+        console.log(localStorage.getItem('localStoredBotsAmount'))
     }
 }
 
@@ -417,11 +424,26 @@ function setGUIEvents(){
         localStorage.setItem('localStoredBotsAmount', window.bots.amount)
     })
     document.getElementById('connect').addEventListener('click', () => {
-        if(!window.connection.ws || window.connection.ws.readyState !== WebSocket.OPEN) window.connection.connect()
+        if(!window.connection.ws || window.connection.ws.readyState !== WebSocket.OPEN) {
+            console.log("Connecting to server...")
+            window.connection.connect()
+        }
     })
     document.getElementById('startBots').addEventListener('click', () => {
+    
         if(window.game.url && window.game.protocolVersion && window.game.clientVersion && !window.user.startedBots){
-           if(window.bots.name && window.bots.amount && !document.getElementById('socialLoginContainer')) window.connection.send(window.buffers.startBots(window.game.url.split('?')[0], window.game.protocolVersion, window.game.clientVersion, window.user.isAlive, window.bots.name, window.bots.amount))
+           if(window.bots.name && window.bots.amount && !document.getElementById('socialLoginContainer')) {
+            console.log("Starting bots...")
+            window.connection.send(
+                window.buffers.startBots(
+                    window.game.url.split('?')[0],
+                    window.game.protocolVersion, 
+                    window.game.clientVersion, 
+                    window.user.isAlive, 
+                    window.bots.name, 
+                    window.bots.amount))
+                    window.user.startedBots = true
+            }
             else alert('Bots name and amount are required before starting the bots, also you need to be logged in to your agar.io account in order to start the bots')
         }
     })
